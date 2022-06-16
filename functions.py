@@ -32,5 +32,5 @@ def newAccount():
     c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?)", details)
     connection.commit()
     connection.close()
-    print("\nAccount created successfully!\n")
+    print("\nAccount created successfully!")
 
