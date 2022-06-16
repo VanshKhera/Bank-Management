@@ -1,4 +1,5 @@
 from functions import *
+import pwinput
 
 #TODO
 commands = [
@@ -21,7 +22,7 @@ while user_input != '10':
             newAccount()
             break
         elif user_input == "2":
-            pass
+            depositMoney()
             break
 
     user_input = input("Please select an option between 1-10: ")

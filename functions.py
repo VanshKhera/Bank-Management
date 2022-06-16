@@ -36,3 +36,26 @@ def newAccount():
     connection.close()
     print("\nAccount created successfully!")
 
+def depositMoney():
+    acc_no = int(input("Enter your account number: "))
+    acc_pin = int(input("Enter your pin: "))
+
+    c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
+    rows = c.fetchall()
+    for row in rows:
+        print(row)
+
+    #TODO
+    # if the user entered wrong details, want to display a message how trash they are at remembering things
+
+    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
+    a = c.fetchall()
+    amount = int(input("Enter the amount to deposit: "))
+
+    for b in a:
+        e_bal = b[0] + amount
+
+    c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin, ))
+
+    connection.commit()
+    connection.close()
