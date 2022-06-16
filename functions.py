@@ -18,7 +18,6 @@ c.execute("""
             """)
 '''
 def newAccount():
-    os.system('cls')
     print("\nNew Account\t\n")
     print("Please enter the following information:\n")
     first_name = input("First Name: ")
@@ -29,7 +28,10 @@ def newAccount():
 
     details = (first_name, last_name, email, account_number,account_pin)
 
-    c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?)", details)
+    try:
+        c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?)", details)
+    except:
+        print("Please select a different account number and try again")
     connection.commit()
     connection.close()
     print("\nAccount created successfully!")

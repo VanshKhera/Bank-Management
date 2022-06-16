@@ -3,7 +3,8 @@ from functions import *
 #TODO
 commands = [
     '1',
-    '2'
+    '2',
+    '3'
 ]
 
 print("Bank Management System")
@@ -23,6 +24,5 @@ while user_input != '10':
             pass
             break
 
-    print("Invalid input!")
-    user_input = input("\nPlease select an option between 1-10: ")
+    user_input = input("Please select an option between 1-10: ")
 

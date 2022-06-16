@@ -1,3 +1,5 @@
 Main Menu
 
 1) Create a new Account
+2) Deposit Money
+3) Withdraw Money
