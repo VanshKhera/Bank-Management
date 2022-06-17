@@ -43,7 +43,12 @@ def depositMoney():
     c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
     rows = c.fetchall()
     for row in rows:
-        print(row)
+        print(f'''
+Name: {row[0]} {row[1]}
+Email: {row[2]}
+Account No. {row[3]}
+Balance: {row[5]} 
+            ''')
 
     #TODO
     # if the user entered wrong details, want to display a message how trash they are at remembering things
@@ -56,6 +61,36 @@ def depositMoney():
         e_bal = b[0] + amount
 
     c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin, ))
+    print(f"\nCurrent Balance: {e_bal}")
+
+    connection.commit()
+    connection.close()
+
+def withdrawMoney():
+    acc_no = int(input("Enter your account number: "))
+    acc_pin = int(input("Enter your pin: "))
+
+    c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
+    rows = c.fetchall()
+    for row in rows:
+        print(f'''
+Name: {row[0]} {row[1]}
+Email: {row[2]}
+Account No. {row[3]}
+Balance: {row[5]} 
+            ''')
+    # TODO
+    # if the user entered wrong details, want to display a message how trash they are at remembering things [copy paste :P]
+
+    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
+    a = c.fetchall()
+    amount = int(input("Enter the amount to withdraw: "))
+
+    for b in a:
+        e_bal = b[0] - amount
+
+    c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin,))
+    print(f"\nRemaining Balance: {e_bal}")
 
     connection.commit()
     connection.close()

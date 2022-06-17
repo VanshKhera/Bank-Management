@@ -24,6 +24,9 @@ while user_input != '10':
         elif user_input == "2":
             depositMoney()
             break
+        elif user_input == "3":
+            withdrawMoney()
+            break
 
     user_input = input("Please select an option between 1-10: ")
 
