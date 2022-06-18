@@ -1,11 +1,11 @@
 from functions import *
-import pwinput
 
 #TODO
 commands = [
     '1',
     '2',
-    '3'
+    '3',
+    '4',
 ]
 
 print("Bank Management System")
@@ -27,6 +27,8 @@ while user_input != '10':
         elif user_input == "3":
             withdrawMoney()
             break
-
+        elif user_input == "4":
+            transferMoney()
+            break
     user_input = input("Please select an option between 1-10: ")
 

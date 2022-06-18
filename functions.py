@@ -44,10 +44,10 @@ def depositMoney():
     rows = c.fetchall()
     for row in rows:
         print(f'''
-Name: {row[0]} {row[1]}
-Email: {row[2]}
-Account No. {row[3]}
-Balance: {row[5]} 
+    Name: {row[0]} {row[1]}
+    Email: {row[2]}
+    Account No. {row[3]}
+    Balance: {row[5]} 
             ''')
 
     #TODO
@@ -55,7 +55,7 @@ Balance: {row[5]}
 
     c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
     a = c.fetchall()
-    amount = int(input("Enter the amount to deposit: "))
+    amount = float(input("Enter the amount to deposit: "))
 
     for b in a:
         e_bal = b[0] + amount
@@ -74,17 +74,17 @@ def withdrawMoney():
     rows = c.fetchall()
     for row in rows:
         print(f'''
-Name: {row[0]} {row[1]}
-Email: {row[2]}
-Account No. {row[3]}
-Balance: {row[5]} 
+    Name: {row[0]} {row[1]}
+    Email: {row[2]}
+    Account No. {row[3]}
+    Balance: {row[5]} 
             ''')
     # TODO
-    # if the user entered wrong details, want to display a message how trash they are at remembering things [copy paste :P]
+    # exception for wrong details
 
     c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     a = c.fetchall()
-    amount = int(input("Enter the amount to withdraw: "))
+    amount = float(input("Enter the amount to withdraw: "))
 
     for b in a:
         e_bal = b[0] - amount
@@ -94,3 +94,63 @@ Balance: {row[5]}
 
     connection.commit()
     connection.close()
+
+def transferMoney():
+    print("\nTRANSFER MONEY")
+    print("\n****ENTER 'FROM' A/C DETAILS****")
+
+    acc_no = float(input("Enter your account number: "))
+    acc_pin = (input("Enter your pin: "))
+
+    c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
+    rows = c.fetchall()
+    for row in rows:
+        print(f'''
+    Name: {row[0]} {row[1]}
+    Email: {row[2]}
+    Account No. {row[3]}
+    Balance: {row[5]} 
+                ''')
+
+    # TODO
+    # exception for wrong details
+
+    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
+    a = c.fetchall()
+
+    amount = float(input("Enter the amount to transfer: "))
+    if amount < 1:
+        print("Minimum amount for a transaction is ₹1.0")
+        exit(1)
+
+    print("\n****ENTER 'TO' A/C DETAILS****")
+    to_acc_no = int(input("Enter account number: "))
+
+    permission = input(f"Are you sure, you want to transfer ₹{amount} from A/C no. {acc_no} to A/C no. {to_acc_no} (y/n)?\n")
+    if permission == 'y' or permission == 'Y':
+
+        # deducting money
+        for b in a:
+            altered_amount = b[0] - amount
+        c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (altered_amount, acc_no, acc_pin,))
+
+        # crediting money
+        # fetching balance
+        c.execute("SELECT balance FROM Customer WHERE account_no = ?", (to_acc_no, ))
+        to_bal = c.fetchall()
+
+        # adding money
+        for x in to_bal:
+            crediting_amount = x[0] + amount
+
+        c.execute("UPDATE Customer SET balance = ? WHERE account_no = ?", (crediting_amount, to_acc_no, ))
+
+        print("----------------------------------------------------------------------")
+        print("TRANSACTION SUCCESSFUL\n")
+        print(f"₹{amount} transferred from A/C no. {acc_no} to A/C no. {to_acc_no}")
+        print("----------------------------------------------------------------------")
+
+        connection.commit()
+        connection.close()
+        exit(0)
+    exit(1)
