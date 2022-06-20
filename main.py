@@ -6,6 +6,7 @@ commands = [
     '2',
     '3',
     '4',
+    '5',
 ]
 
 print("Bank Management System")
@@ -29,6 +30,9 @@ while user_input != '10':
             break
         elif user_input == "4":
             transferMoney()
+            break
+        elif user_input == '5':
+            calculateLoan()
             break
     user_input = input("Please select an option between 1-10: ")
 

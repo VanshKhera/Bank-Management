@@ -4,3 +4,4 @@ Main Menu
 2) Deposit Money
 3) Withdraw Money
 4) Transfer Money
+5) Calculate Loan

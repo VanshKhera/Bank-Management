@@ -26,12 +26,8 @@ def newAccount():
     account_number = input("Account Number: ")
     account_pin = input("Account Pin: ")
 
-    details = (first_name, last_name, email, account_number,account_pin)
-
-    try:
-        c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?)", details)
-    except:
-        print("Please select a different account number and try again")
+    details = (first_name, last_name, email, account_number,account_pin, 0.0)
+    c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?, ?)", details)
     connection.commit()
     connection.close()
     print("\nAccount created successfully!")
@@ -120,13 +116,13 @@ def transferMoney():
 
     amount = float(input("Enter the amount to transfer: "))
     if amount < 1:
-        print("Minimum amount for a transaction is ₹1.0")
+        print("Minimum amount for a transaction is $1.0")
         exit(1)
 
     print("\n****ENTER 'TO' A/C DETAILS****")
     to_acc_no = int(input("Enter account number: "))
 
-    permission = input(f"Are you sure, you want to transfer ₹{amount} from A/C no. {acc_no} to A/C no. {to_acc_no} (y/n)?\n")
+    permission = input(f"Are you sure, you want to transfer ${amount} from A/C no. {acc_no} to A/C no. {to_acc_no} (y/n)?\n")
     if permission == 'y' or permission == 'Y':
 
         # deducting money
@@ -147,10 +143,60 @@ def transferMoney():
 
         print("----------------------------------------------------------------------")
         print("TRANSACTION SUCCESSFUL\n")
-        print(f"₹{amount} transferred from A/C no. {acc_no} to A/C no. {to_acc_no}")
+        print(f"${amount} transferred from A/C no. {acc_no} to A/C no. {to_acc_no}")
         print("----------------------------------------------------------------------")
 
         connection.commit()
         connection.close()
         exit(0)
     exit(1)
+
+def calculateLoan():
+    print("LOAN CALCULATOR")
+    print('''
+    Calculate for:
+    1) Interest
+    2) Principle
+    3) Rate
+    4) Time (per year)
+    ''')
+    choice = input("Select an option: ")
+    if choice in ['1', '2', '3', '4',]:
+        if choice == '1':
+            P = float(input("Enter the principle/base amount: "))
+            R = float(input("Enter the Rate per year: "))
+            T = float(input("Enter the time in years: "))
+
+            SI = (P*R*T)/100
+
+            print(f"\nYou'll have to pay ${SI} extra as interest in {T} year(s)\n${SI + P} in total")
+
+        if choice == '2':
+            I = float(input("Enter the Interest per year: "))
+            R = float(input("Enter the Rate per year: "))
+            T = float(input("Enter the time in years: "))
+
+            r = R/100
+            P = I / (r*T)
+
+            print("\nPrinciple/Base Amount: $%.2f" % round(P, 2))
+
+        if choice == '3':
+            P = float(input("Enter the principle/base amount: "))
+            I = float(input("Enter the Interest per year: "))
+            T = float(input("Enter the time in years: "))
+
+            r = I / (P * T)
+            R = r * 100
+
+            print(f"\nRate on Principal: ${P}, Interest: ${I}, Time: {T} year(s), is {R}% PER YEAR")
+
+        if choice == '4':
+            P = float(input("Enter the principle/base amount: "))
+            I = float(input("Enter the Interest per year: "))
+            R = float(input("Enter the Rate per year: "))
+
+            r = R/100
+            T = I / (P * r)
+
+            print(f"\nTime: {T} year(s) about {round(T)} year(s)")
