@@ -15,9 +15,9 @@ with open("help.txt", "r") as f:
     content = f.read()
     print(content)
 
-user_input = input("\nPlease select an option between 1-10: ")
+user_input = input("\nPlease select an option between 1-5: ")
 
-while user_input != '10':
+while user_input != '5':
     if user_input in commands:
         if user_input == "1":
             newAccount()

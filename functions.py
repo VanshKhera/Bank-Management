@@ -1,5 +1,21 @@
 import sqlite3
 import os
+
+# function to clear the terminal
+def clearTerminal():
+    os.system('cls')
+
+def asterisks(str):
+    # TODO: soon going to center align the whole text :)
+    print("***********************************************************************************")
+    print(str)
+    print("***********************************************************************************")
+
+def strCheck(arg, err_msg):
+    if len(arg) == 0:
+        print(f"'{err_msg}' can't be empty!")
+        exit(1)
+
 # Connecting Database with Python
 connection = sqlite3.connect("database.db")
 c = connection.cursor()
@@ -12,22 +28,40 @@ c.execute("""
                 first_name text,  
                 last_name text,
                 email text,
-                account_no integer, 
-                pin integer
+                account_no integer UNIQUE, 
+                pin integer,
+                balance real DEFAULT 0.0
             )   
             """)
 '''
+
 def newAccount():
-    print("\nNew Account\t\n")
+    clearTerminal()
+    asterisks("New Account")
+
     print("Please enter the following information:\n")
+
     first_name = input("First Name: ")
+    strCheck(first_name, "First name")
+
     last_name = input("Last Name: ")
+    strCheck(last_name, "Last name")
+
     email = input("Email: ")
+    strCheck(email, "Email")
+
     account_number = input("Account Number: ")
+    strCheck(account_number, "Account Number")
+
     account_pin = input("Account Pin: ")
+    strCheck(account_pin, "Account Pin")
 
     details = (first_name, last_name, email, account_number,account_pin, 0.0)
-    c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?, ?)", details)
+    try:
+        c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?, ?)", details)
+    except sqlite3.IntegrityError as err:
+        asterisks("This account no. already exists, Please try again with a different account number!")
+        exit(1)
     connection.commit()
     connection.close()
     print("\nAccount created successfully!")
