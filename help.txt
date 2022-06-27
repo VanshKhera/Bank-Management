@@ -1,7 +1,5 @@
-Main Menu
-
-1) Create a new Account
-2) Deposit Money
-3) Withdraw Money
-4) Transfer Money
-5) Calculate Loan
+1 Create a new Account
+2 Deposit Money
+3 Withdraw Money
+4 Transfer Money
+5 Calculate Loan

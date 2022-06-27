@@ -1,19 +1,29 @@
 from functions import *
+from rich.console import Console
+from rich.markdown import Markdown
 
-#TODO
 commands = [
     '1',
     '2',
     '3',
     '4',
     '5',
+    '6',
 ]
 
-print("Bank Management System")
+# Pretty design
+MARKDOWN = '''
+# Bank Management System
+'''
+
+console = Console()
+md = Markdown(MARKDOWN)
+console.print(md)
+console.print("Main Menu\n", style="bold underline green")
 
 with open("help.txt", "r") as f:
     content = f.read()
-    print(content)
+    console.print(content)
 
 user_input = input("\nPlease select an option between 1-5: ")
 
