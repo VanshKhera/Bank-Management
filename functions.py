@@ -1,107 +1,67 @@
 import sqlite3
 import os
-from rich.console import Console
-from rich.markdown import Markdown
-from rich.theme import Theme
-from rich.table import Table
-
-custom_theme = Theme({"success": "green", "error": "bold red"})
-
-console = Console(theme=custom_theme)
-
-# function to clear the terminal
-def clearTerminal():
-    os.system('cls')
-
-def strCheck(arg, err_msg):
-    if len(arg) == 0:
-        console.print(f"'{err_msg}' can't be empty!", style="error")
-        exit(1)
-
 # Connecting Database with Python
 connection = sqlite3.connect("database.db")
 c = connection.cursor()
 
 # Creating Tables
+# Sqlite3 datatypes: null, integer, real (float), text, blob (.png, .jpg, .mp3, .mp4, etc.)
 '''
 c.execute("""
             CREATE TABLE Customer(
                 first_name text,  
                 last_name text,
                 email text,
-                account_no integer UNIQUE, 
-                pin integer,
-                balance real DEFAULT 0.0
+                account_no integer, 
+                pin integer
             )   
             """)
 '''
-
-MARKDOWN = '''
-# Bank Management System
-'''
-md = Markdown(MARKDOWN)
-
 def newAccount():
-    clearTerminal()
-    console.print(md)
-    console.print("New Account\n", style="bold underline green")
-
+    print("\nNew Account\t\n")
     print("Please enter the following information:\n")
-
     first_name = input("First Name: ")
-    strCheck(first_name, "First name")
-
     last_name = input("Last Name: ")
-    strCheck(last_name, "Last name")
-
     email = input("Email: ")
-    strCheck(email, "Email")
-
     account_number = input("Account Number: ")
-    strCheck(account_number, "Account Number")
-
     account_pin = input("Account Pin: ")
-    strCheck(account_pin, "Account Pin")
 
     details = (first_name, last_name, email, account_number,account_pin, 0.0)
-    try:
-        c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?, ?)", details)
-    # If the account number isn't unique
-    except sqlite3.IntegrityError as err:
-        console.print("This account no. already exists, Please try again with a different account number!", style="error")
-        exit(1)
+    c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?, ?)", details)
     connection.commit()
     connection.close()
-    console.print("\nAccount created successfully!", style="success")
+    print("\nAccount created successfully!")
 
 def depositMoney():
     acc_no = int(input("Enter your account number: "))
     acc_pin = int(input("Enter your pin: "))
 
-    c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
+    c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
     rows = c.fetchall()
     for row in rows:
         print(f'''
-       Name: {row[0]} {row[1]}
-       Email: {row[2]}
-       Account No. {row[3]}
-       Balance: {row[5]} 
-               ''')
-    # TODO
-    # exception for wrong details
+    Name: {row[0]} {row[1]}
+    Email: {row[2]}
+    Account No. {row[3]}
+    Balance: {row[5]} 
+            ''')
 
-    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
+    #TODO
+    # if the user entered wrong details, want to display a message how trash they are at remembering things
+
+    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
     a = c.fetchall()
-    amount = float(input("Enter the amount to withdraw: "))
+    amount = float(input("Enter the amount to deposit: "))
 
     for b in a:
-        e_bal = b[0] - amount
+        e_bal = b[0] + amount
 
-    c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin,))
-    print(f"\nRemaining Balance: {e_bal}")
+    c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin, ))
+    print(f"\nCurrent Balance: {e_bal}")
 
     connection.commit()
     connection.close()
+
 def withdrawMoney():
     acc_no = int(input("Enter your account number: "))
     acc_pin = int(input("Enter your pin: "))
