@@ -1,66 +1,150 @@
 import sqlite3
 import os
+from rich.console import Console
+from rich.markdown import Markdown
+from rich.theme import Theme
+from rich.table import Table
+
+custom_theme = Theme({"success": "green", "error": "bold red"})
+
+console = Console(theme=custom_theme)
+
+# function to clear the terminal
+def clearTerminal():
+    os.system('cls')
+
+# making sure that the input isn't empty
+def strCheck(arg, err_msg):
+    if len(str(arg)) == 0:
+        console.print(f"'{err_msg}' can't be empty!", style="error")
+        exit(1)
+
+# For fields like first_name and last_name making sure that they dont contain numbers, because no one has numbers in their name- or maybe they do, anyway who cares
+def has_numbers(inputString):
+    condition = any(char.isdigit() for char in inputString)
+    if condition:
+        console.print("Cannot contain digits")
+        exit(1)
+
 # Connecting Database with Python
 connection = sqlite3.connect("database.db")
 c = connection.cursor()
 
-# Creating Tables
-# Sqlite3 datatypes: null, integer, real (float), text, blob (.png, .jpg, .mp3, .mp4, etc.)
+# Creating Table
 '''
 c.execute("""
             CREATE TABLE Customer(
                 first_name text,  
                 last_name text,
                 email text,
-                account_no integer, 
-                pin integer
+                account_no integer UNIQUE, 
+                pin integer,
+                balance real DEFAULT 0.0
             )   
             """)
 '''
+
+MARKDOWN = '''
+# Bank Management System
+'''
+md = Markdown(MARKDOWN)
+
 def newAccount():
-    print("\nNew Account\t\n")
+    clearTerminal()
+    console.print(md)
+    console.print("New Account\n", style="bold underline green")
+
     print("Please enter the following information:\n")
+
     first_name = input("First Name: ")
+    strCheck(first_name, "First name")
+    has_numbers(first_name)
+
     last_name = input("Last Name: ")
+    strCheck(last_name, "Last name")
+    has_numbers(first_name)
+
     email = input("Email: ")
-    account_number = input("Account Number: ")
-    account_pin = input("Account Pin: ")
+    strCheck(email, "Email")
+
+    try:
+        account_number = int(input("Account Number: "))
+        strCheck(account_number, "Account Number")
+    except ValueError:
+        console.print("Account Number can only be an integer!", style="error")
+        exit(1)
+
+    try:
+        account_pin = int(input("Account Pin: "))
+        strCheck(account_pin, "Account Pin")
+    except ValueError:
+        console.print("Account Number can only be an integer!", style="error")
+        exit(1)
 
     details = (first_name, last_name, email, account_number,account_pin, 0.0)
-    c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?, ?)", details)
+    try:
+        c.execute("INSERT INTO Customer VALUES (?, ?, ?, ?, ?, ?)", details)
+    # If the account number isn't unique
+    except sqlite3.IntegrityError as err:
+        console.print("This account no. already exists, Please try again with a different account number!", style="error")
+        exit(1)
     connection.commit()
     connection.close()
-    print("\nAccount created successfully!")
+    console.print("\nAccount created successfully!", style="success")
 
 def depositMoney():
-    acc_no = int(input("Enter your account number: "))
-    acc_pin = int(input("Enter your pin: "))
+    clearTerminal()
+    console.print(md)
+    console.print("Deposit Money\n", style="bold underline green")
 
-    c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
+    try:
+        acc_no = int(input("Enter your account number: "))
+    except ValueError:
+        console.print("Account Number can only be an integer!", style="error")
+        exit(1)
+    try:
+        acc_pin = int(input("Enter your pin: "))
+    except ValueError:
+        console.print("Account Pin can only be an integer!", style="error")
+        exit(1)
+    c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     rows = c.fetchall()
+    if rows == []:
+        console.print("Account doesnt exist!", style="error")
+        exit(1)
+
     for row in rows:
-        print(f'''
-    Name: {row[0]} {row[1]}
-    Email: {row[2]}
-    Account No. {row[3]}
-    Balance: {row[5]} 
-            ''')
+        name = str(row[0] + " " + row[1])
+        email = str(row[2])
+        account_no = str(row[3])
+        balance = str(row[5])
 
-    #TODO
-    # if the user entered wrong details, want to display a message how trash they are at remembering things
+        table = Table(title="Account details")
 
-    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin, ))
+        table.add_column("Name", style="cyan")
+        table.add_column("Email", style="red")
+        table.add_column("Account No.", style="blue")
+        table.add_column("Balance", style="yellow")
+
+        table.add_row(name, email, account_no, balance)
+        console.print(table)
+
+    # TODO
+    # if the user entered wrong details, raise an error
+
+    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     a = c.fetchall()
     amount = float(input("Enter the amount to deposit: "))
 
     for b in a:
         e_bal = b[0] + amount
 
-    c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin, ))
+    c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin,))
     print(f"\nCurrent Balance: {e_bal}")
 
     connection.commit()
     connection.close()
+
 
 def withdrawMoney():
     acc_no = int(input("Enter your account number: "))
