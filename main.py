@@ -26,9 +26,10 @@ with open("help.txt", "r") as f:
     content = f.read()
     console.print(content)
 
-user_input = input("\nPlease select an option between 1-5: ")
+user_input = input("\nPlease select an option between 1-6: ")
 
-while user_input != '5':
+# while the enters 6, the program quits
+while user_input != '6':
     if user_input in commands:
         if user_input == "1":
             newAccount()
@@ -45,5 +46,4 @@ while user_input != '5':
         elif user_input == '5':
             calculateLoan()
             break
-    user_input = input("Please select an option between 1-10: ")
-
+    user_input = input("Please select an option between 1-6: ")

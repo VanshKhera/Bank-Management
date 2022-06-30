@@ -3,3 +3,4 @@
 3 Withdraw Money
 4 Transfer Money
 5 Calculate Loan
+6 Exit
