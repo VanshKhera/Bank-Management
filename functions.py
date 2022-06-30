@@ -23,7 +23,7 @@ def strCheck(arg, err_msg):
 def has_numbers(inputString):
     condition = any(char.isdigit() for char in inputString)
     if condition:
-        console.print("Cannot contain digits")
+        console.print("Cannot contain numbers!", style="error")
         exit(1)
 
 # Connecting Database with Python
