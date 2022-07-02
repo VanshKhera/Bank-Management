@@ -109,6 +109,7 @@ def depositMoney():
         exit(1)
     c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     rows = c.fetchall()
+
     if rows == []:
         console.print("Account doesnt exist!", style="error")
         exit(1)
@@ -129,18 +130,17 @@ def depositMoney():
         table.add_row(name, email, account_no, balance)
         console.print(table)
 
-    # TODO
-    # if the user entered wrong details, raise an error
+    try:
+        amount = float(input("Enter the amount to deposit: "))
+    except ValueError:
+        console.print("Amount can only be an integer!", style="error")
+        exit(1)
 
-    c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
-    a = c.fetchall()
-    amount = float(input("Enter the amount to deposit: "))
-
-    for b in a:
-        e_bal = b[0] + amount
+    for b in rows:
+        e_bal = b[5] + amount
 
     c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin,))
-    print(f"\nCurrent Balance: {e_bal}")
+    console.print(f"\nCurrent Balance: {e_bal}", style="success")
 
     connection.commit()
     connection.close()
