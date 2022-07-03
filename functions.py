@@ -300,51 +300,99 @@ def transferMoney():
     exit(1)
 
 def calculateLoan():
-    print("LOAN CALCULATOR")
-    print('''
-    Calculate for:
-    1) Interest
-    2) Principle
-    3) Rate
-    4) Time (per year)
+    clearTerminal()
+    console.print(md)
+    console.print("Loan Calculator\n", style="bold underline green")
+    console.print('''
+Calculate for:
+1 Interest
+2 Principle
+3 Rate
+4 Time (per year)
     ''')
     choice = input("Select an option: ")
     if choice in ['1', '2', '3', '4',]:
         if choice == '1':
-            P = float(input("Enter the principle/base amount: "))
-            R = float(input("Enter the Rate per year: "))
-            T = float(input("Enter the time in years: "))
+            try:
+                P = float(input("Enter the principle/base amount: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+            try:
+                R = float(input("Enter the Rate per year: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+            try:
+                T = float(input("Enter the time in years: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
 
             SI = (P*R*T)/100
 
-            print(f"\nYou'll have to pay ${SI} extra as interest in {T} year(s)\n${SI + P} in total")
+            console.print(f"\nYou'll have to pay ${SI} extra as interest in {T} year(s)\n${SI + P} in total", style="yellow bold")
+            exit(0)
 
         if choice == '2':
-            I = float(input("Enter the Interest per year: "))
-            R = float(input("Enter the Rate per year: "))
-            T = float(input("Enter the time in years: "))
+            try:
+                I = float(input("Enter the Interest per year: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+            try:
+                R = float(input("Enter the Rate per year: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+            try:
+                T = float(input("Enter the time in years: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+
 
             r = R/100
             P = I / (r*T)
 
-            print("\nPrinciple/Base Amount: $%.2f" % round(P, 2))
+            console.print("\nPrinciple/Base Amount: $%.2f" % round(P, 2), style="yellow bold")
+            exit(0)
 
         if choice == '3':
-            P = float(input("Enter the principle/base amount: "))
-            I = float(input("Enter the Interest per year: "))
-            T = float(input("Enter the time in years: "))
+            try:
+                P = float(input("Enter the principle/base amount: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+
+            try:
+                I = float(input("Enter the Interest per year: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+
+            try:
+                T = float(input("Enter the time in years: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
 
             r = I / (P * T)
             R = r * 100
 
-            print(f"\nRate on Principal: ${P}, Interest: ${I}, Time: {T} year(s), is {R}% PER YEAR")
+            console.print(f"\nRate on Principal: ${P}, Interest: ${I}, Time: {T} year(s), is {R}% PER YEAR", style="yellow bold")
+            exit(0)
 
         if choice == '4':
-            P = float(input("Enter the principle/base amount: "))
-            I = float(input("Enter the Interest per year: "))
-            R = float(input("Enter the Rate per year: "))
+            try:
+                P = float(input("Enter the principle/base amount: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+            try:
+                I = float(input("Enter the Interest per year: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
+            try:
+                R = float(input("Enter the Rate per year: "))
+            except ValueError:
+                console.print("Invalid input", style="error")
 
             r = R/100
             T = I / (P * r)
 
-            print(f"\nTime: {T} year(s) about {round(T)} year(s)")
+            console.print(f"\nTime: {T} year(s) about {round(T)} year(s)", style="yellow bold")
+            exit(0)
+
+    console.print("Invalid option", style="error")
+    exit(1)
