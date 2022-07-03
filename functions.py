@@ -147,64 +147,128 @@ def depositMoney():
 
 
 def withdrawMoney():
-    acc_no = int(input("Enter your account number: "))
-    acc_pin = int(input("Enter your pin: "))
+    clearTerminal()
+    console.print(md)
+    console.print("Withdraw Money\n", style="bold underline green")
+    try:
+        acc_no = int(input("Enter your account number: "))
+    except ValueError:
+        console.print("Account Number can only be an integer!", style="error")
+        exit(1)
+    try:
+        acc_pin = int(input("Enter your pin: "))
+    except ValueError:
+        console.print("Account Pin can only be an integer!", style="error")
+        exit(1)
 
     c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     rows = c.fetchall()
+
+    if rows == []:
+        console.print("Account doesnt exist!", style="error")
+        exit(1)
+
     for row in rows:
-        print(f'''
-    Name: {row[0]} {row[1]}
-    Email: {row[2]}
-    Account No. {row[3]}
-    Balance: {row[5]} 
-            ''')
-    # TODO
-    # exception for wrong details
+        name = str(row[0] + " " + row[1])
+        email = str(row[2])
+        account_no = str(row[3])
+        balance = str(row[5])
+
+        table = Table(title="Account details")
+
+        table.add_column("Name", style="cyan")
+        table.add_column("Email", style="red")
+        table.add_column("Account No.", style="blue")
+        table.add_column("Balance", style="yellow")
+
+        table.add_row(name, email, account_no, balance)
+        console.print(table)
 
     c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     a = c.fetchall()
-    amount = float(input("Enter the amount to withdraw: "))
+    try:
+        amount = float(input("Enter the amount to withdraw: "))
+    except ValueError:
+        console.print("Amount can only be an integer!", style="error")
+        exit(1)
 
     for b in a:
         e_bal = b[0] - amount
 
     c.execute("UPDATE Customer SET balance = ? WHERE account_no = ? AND account_pin = ? ", (e_bal, acc_no, acc_pin,))
-    print(f"\nRemaining Balance: {e_bal}")
+    console.print(f"\nRemaining Balance: {e_bal}", style="success")
 
     connection.commit()
     connection.close()
 
 def transferMoney():
-    print("\nTRANSFER MONEY")
-    print("\n****ENTER 'FROM' A/C DETAILS****")
+    clearTerminal()
+    console.print(md)
+    console.print("Transfer Money\n", style="bold underline green")
 
-    acc_no = float(input("Enter your account number: "))
-    acc_pin = (input("Enter your pin: "))
+    console.print("ENTER 'FROM' A/C DETAILS", style="cyan")
+
+    try:
+        acc_no = int(input("Enter your account number: "))
+    except ValueError:
+        console.print("Amount can only be an integer!", style="error")
+        exit(1)
+    try:
+        acc_pin = int(input("Enter your pin: "))
+    except ValueError:
+        console.print("Amount can only be an integer!", style="error")
+        exit(1)
 
     c.execute("SELECT * FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     rows = c.fetchall()
-    for row in rows:
-        print(f'''
-    Name: {row[0]} {row[1]}
-    Email: {row[2]}
-    Account No. {row[3]}
-    Balance: {row[5]} 
-                ''')
 
-    # TODO
-    # exception for wrong details
+    if rows == []:
+        console.print("Account doesnt exist!", style="error")
+        exit(1)
+
+    for row in rows:
+        name = str(row[0] + " " + row[1])
+        email = str(row[2])
+        account_no = str(row[3])
+        balance = str(row[5])
+
+        table = Table(title="Account details")
+
+        table.add_column("Name", style="cyan")
+        table.add_column("Email", style="red")
+        table.add_column("Account No.", style="blue")
+        table.add_column("Balance", style="yellow")
+
+        table.add_row(name, email, account_no, balance)
+        console.print(table)
 
     c.execute("SELECT balance FROM Customer WHERE account_no = ? AND account_pin = ?", (acc_no, acc_pin,))
     a = c.fetchall()
 
-    amount = float(input("Enter the amount to transfer: "))
-    if amount < 1:
-        print("Minimum amount for a transaction is $1.0")
+    try:
+        amount = float(input("Enter the amount to transfer: "))
+    except ValueError:
+        console.print("Amount can only be an integer!", style="error")
         exit(1)
 
-    print("\n****ENTER 'TO' A/C DETAILS****")
-    to_acc_no = int(input("Enter account number: "))
+    if amount < 1:
+        console.print("Minimum amount for a transaction is $1.0", style="error")
+        exit(1)
+
+    console.print("\nENTER 'TO' A/C DETAILS", style="cyan")
+    try:
+        to_acc_no = int(input("Enter account number: "))
+    except ValueError:
+        console.print("Account number can only be an integer!", style="error")
+        exit(1)
+
+    # checking if the account exists or not
+    c.execute("SELECT account_no FROM Customer WHERE account_no == ?", (to_acc_no, ))
+    z = c.fetchall()
+
+    if z == []:
+        console.print("Account doesnt exist!", style="error")
+        exit(1)
 
     permission = input(f"Are you sure, you want to transfer ${amount} from A/C no. {acc_no} to A/C no. {to_acc_no} (y/n)?\n")
     if permission == 'y' or permission == 'Y':
@@ -226,7 +290,7 @@ def transferMoney():
         c.execute("UPDATE Customer SET balance = ? WHERE account_no = ?", (crediting_amount, to_acc_no, ))
 
         print("----------------------------------------------------------------------")
-        print("TRANSACTION SUCCESSFUL\n")
+        console.print("TRANSACTION SUCCESSFUL\n", style="success")
         print(f"${amount} transferred from A/C no. {acc_no} to A/C no. {to_acc_no}")
         print("----------------------------------------------------------------------")
 
