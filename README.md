@@ -67,7 +67,7 @@ Admin side of the system, with full control over adding, withdrawing, transferin
 ## Getting Started
 This Bank-Management system is a very light weight software compared to other GUI's, Webapps because its a shell-based application. For now there are only 5 Features  in the software that are Creating an account, Depositing money, Withdrawing money, Transfering money and Calculating loan. The program can be extended with more features, feel free to drop your suggestions [here](https://github.com/VanshKhera/Bank-Management/issues) :))
 ## Installation 
-*Coming Soon!*
+Download the Source code, navigate to the directory same directory and open command prompt or any terminal. type `python main.py` and press enter, **Done!**
 ## Inside the code
 ### File Structure
 `main.py`
